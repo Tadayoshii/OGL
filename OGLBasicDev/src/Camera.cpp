@@ -7,8 +7,6 @@
 
 #include "Camera.h"
 
-
-
 #ifndef M_PI
 #define M_PI 3.1415926
 #endif
@@ -50,19 +48,18 @@ void Camera::moveY(float velocity, float angle) {
 void Camera::Control(float moveVel, float mouseVel, sf::Window * window) {
 	int MidX = window->getSize().x/2;
 	int MidY = window->getSize().y/2;
-	window->setMouseCursorVisible(false);
 
 	int tmpX, tmpY;
 	sf::Vector2i pos = sf::Mouse::getPosition(*window);
 	tmpX = pos.x;
 	tmpY = pos.y;
 
+	sf::Mouse::setPosition(sf::Vector2i(MidX,MidY),*window);
+
 	camYaw += mouseVel*(MidX-tmpX);
 	camPitch += mouseVel*(MidY-tmpY);
 
 	lock();
-
-	sf::Mouse::setPosition(sf::Vector2i(MidX,MidY),*window);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		if (camPitch != 90 && camPitch != -90) {
@@ -84,28 +81,15 @@ void Camera::Control(float moveVel, float mouseVel, sf::Window * window) {
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-		camY += 0.005;
+		camY += moveVel;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
-		camY -= 0.005;
+		camY -= moveVel;
 	}
-	glRotatef(-camPitch,1.0,0.0,0.0);
-	glRotatef(-camYaw,0.0,1.0,0.0);
 }
 
 void Camera::Update() {
+	glRotatef(-camPitch,1.0,0.0,0.0);
+	glRotatef(-camYaw,0.0,1.0,0.0);
 	glTranslatef(-camX, -camY, -camZ);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

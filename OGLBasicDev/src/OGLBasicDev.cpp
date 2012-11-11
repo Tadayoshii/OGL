@@ -6,21 +6,29 @@
 #include <SFML/Graphics.hpp>
 #include "Camera.h"
 
-int draw(sf::Window * window);
+int draw();
 int init();
 void drawDice(float size);
+void update(float delta, sf::Window *window);
 
 int window_width = 800;
 int window_height = 600;
 float rot_angle = 0.01f;
+float static normalizer = 100;
 
 Camera cam;
 
 int main()
 {
+	float delta = 0;
+
 	sf::Window window(sf::VideoMode(window_width, window_height), "OpenGL Test", sf::Style::Default, sf::ContextSettings(32));
+	window.setFramerateLimit(60);
+	//window.setMouseCursorVisible(false);
 
 	init();
+	sf::Mouse::setPosition(sf::Vector2i(window_width/2,window_height/2),window);
+	sf::Clock clock;
 
     bool running = true;
     while (running)
@@ -44,19 +52,26 @@ int main()
 
             }
         }
+        delta = clock.restart().asSeconds();
 
-        draw(&window);
-
+        update(delta, &window);
+        draw();
         window.display();
+
+        float fps = 1.f / delta;
+        std::cout << "DELTA: "<< delta << "     FPS:" << fps << std::endl;
     }
     return 0;
 }
 
 int init(){
+
 	cam = Camera();
 	glShadeModel(GL_SMOOTH);
+
 	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
 	glClearDepth(1.0f);
+
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
@@ -84,11 +99,18 @@ int init(){
 	return 0;
 }
 
-int draw(sf::Window* window){
+void update(float delta, sf::Window* window){
+	float velocity = (0.8*delta)*normalizer;
+	float velocity2 = (0.2*delta)*normalizer;
+
+	cam.Control(velocity,velocity2,window);
+}
+
+int draw(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-	cam.Control(0.002,0.2,window);
+
 	cam.Update();
 
 	float pos[]={0.0,10.0,-100.0,1.0};
