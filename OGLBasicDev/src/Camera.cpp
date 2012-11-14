@@ -15,6 +15,8 @@ Camera::Camera() {
 	camX=0.0, camY=0.0, camZ=5.0;
 	camYaw=0.0;
 	camPitch=0.0;
+	focus = true;
+	normalizer = true;
 }
 
 void Camera::lock() {
@@ -46,45 +48,55 @@ void Camera::moveY(float velocity, float angle) {
 }
 
 void Camera::Control(float moveVel, float mouseVel, sf::Window * window) {
-	int MidX = window->getSize().x/2;
-	int MidY = window->getSize().y/2;
+	if (focus) {
 
-	int tmpX, tmpY;
-	sf::Vector2i pos = sf::Mouse::getPosition(*window);
-	tmpX = pos.x;
-	tmpY = pos.y;
+		int MidX = window->getSize().x/2;
+		int MidY = window->getSize().y/2;
 
-	sf::Mouse::setPosition(sf::Vector2i(MidX,MidY),*window);
+//		if (normalizer) {
+//			sf::Mouse::setPosition(sf::Vector2i(window->getSize().x/2,window->getSize().y/2),*window);
+//			normalizer = false;
+//		}
 
-	camYaw += mouseVel*(MidX-tmpX);
-	camPitch += mouseVel*(MidY-tmpY);
+		int tmpX, tmpY;
+		sf::Vector2i pos = sf::Mouse::getPosition(*window);
+		tmpX = pos.x;
+		tmpY = pos.y;
 
-	lock();
+		sf::Mouse::setPosition(sf::Vector2i(MidX,MidY),*window);
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		if (camPitch != 90 && camPitch != -90) {
-			moveXZ(moveVel,0.0);
-			//moveY(moveVel, 0.0);
+		camYaw += mouseVel*(MidX-tmpX);
+		camPitch += mouseVel*(MidY-tmpY);
+
+		lock();
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+			if (camPitch != 90 && camPitch != -90) {
+				moveXZ(moveVel,0.0);
+				//moveY(moveVel, 0.0);
+			}
 		}
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		if (camPitch != 90 && camPitch != -90) {
-			moveXZ(moveVel,180.0);
-			//moveY(moveVel, 180.0);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+			if (camPitch != 90 && camPitch != -90) {
+				moveXZ(moveVel,180.0);
+				//moveY(moveVel, 180.0);
+			}
 		}
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		moveXZ(moveVel,90.0);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		moveXZ(moveVel,270.0);
-	}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+			moveXZ(moveVel,90.0);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+			moveXZ(moveVel,270.0);
+		}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-		camY += moveVel;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
-		camY -= moveVel;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+			camY += moveVel;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
+			camY -= moveVel;
+		}
+	}else{
+		normalizer = true;
 	}
 }
 

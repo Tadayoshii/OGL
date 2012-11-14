@@ -19,6 +19,7 @@ public:
 	Camera();
 	void Update();
 	void Control(float,float,sf::Window*);
+	bool focus;
 private:
 	float camX, camY, camZ;
 	float camYaw;
@@ -26,6 +27,7 @@ private:
 	void moveXZ(float,float);
 	void moveY(float,float);
 	void lock();
+	bool normalizer;
 };
 
 #endif /* CAMERA_H_ */
